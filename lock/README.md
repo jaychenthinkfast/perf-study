@@ -1,4 +1,4 @@
-# 并发安全的 map 
+# 并发安全的 map [local cache] 
 * sync.Mutex
   * 适用于写多｜读少
 * sync.RWMutex
