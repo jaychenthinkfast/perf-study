@@ -118,7 +118,7 @@ func startTheWorldWithSema(now int64, w worldStop) int64 {
 ```
 
 ## 扩展
-### tidwall/evio
+### [tidwall/evio](https://github.com/tidwall/evio)
 与 Go 官方的 net 库相比，tidwall/evio 通过直接调用操作系统的 epoll（在 Linux 上）或 kqueue（在 FreeBSD 和 macOS 上）系统调用，避免了标准库中可能存在的抽象层开销，从而提高了 I/O 操作的效率。
 
 
@@ -127,7 +127,7 @@ func startTheWorldWithSema(now int64, w worldStop) int64 {
 
 然而，需要注意的是，evio 并非适用于所有场景。 对于需要长时间运行的请求（如数据库访问、身份验证等），官方建议仍然使用 Go 的 net 或 net/http 库。 此外，evio 的设计初衷是用于特定的高性能场景，如构建类似 Redis 或 HAProxy 的服务器。
 
-### cloudwego/netpoll
+### [cloudwego/netpoll](https://github.com/cloudwego/netpoll)
 * LinkBuffer 提供可以流式读写的 nocopy API
 * gopool 提供高性能的 goroutine 池
 * mcache 提供高效的内存复用
@@ -137,7 +137,8 @@ func startTheWorldWithSema(now int64, w worldStop) int64 {
 * 支持 TCP，Unix Domain Socket
 * 支持 Linux，macOS（操作系统）
 
-### panjf2000/gnet
+### [panjf2000/gnet](https://github.com/panjf2000/gnet)
+
 gnet 是一个基于事件驱动的高性能和轻量级网络框架。这个框架是基于 epoll 和 kqueue 从零开发的，而且相比 Go net，它能以更低的内存占用实现更高的性能。
 
 gnet 和 net 有着不一样的网络编程范式。因此，用 gnet 开发网络应用和用 net 开发区别很大，而且两者之间不可调和。社区里有其他同类的产品像是 libuv, netty, twisted, tornado，gnet 的底层工作原理和这些框架非常类似。
@@ -159,3 +160,37 @@ gnet 衍生自另一个项目：evio，但拥有更丰富的功能特性，且�
 * 支持 Linux, macOS, Windows 和 *BSD 操作系统: Darwin/DragonFlyBSD/FreeBSD/NetBSD/OpenBSD
 * Edge-triggered I/O 支持
 * 多网络地址绑定
+
+![img.png](gnet-demo/image/img0.png)
+![img.png](gnet-demo/image/img.png)
+
+test case
+
+1. v2:
+    server
+    ```
+     go run main.go 
+    [gnet] 2025-02-06T19:36:28.953536+08:00 INFO    logging/logger.go:256   Launching gnet with 1 event-loops, listening on: tcp://:9000
+    2025/02/06 19:36:28 echo server with multi-core=false is listening on tcp://:9000
+    ```
+    client
+    ```
+    echo -e "dddd" |nc 0.0.0.0 9000
+    dddd
+    ```
+2. v1:
+    server 
+    ```
+     go run server.go
+    2025/02/06 20:15:25 Test codec server is listening on :9000 (multi-cores: true, loops: 8)
+    ```
+    client
+    ```
+    go run client.go     
+    received:  hello
+    received:  world
+    ```
+#### 参考
+* [https://strikefreedom.top/archives/go-event-loop-networking-library-gnet](https://strikefreedom.top/archives/go-event-loop-networking-library-gnet)
+* [https://www.51cto.com/article/711144.html](https://www.51cto.com/article/711144.html)
+* [https://github.com/gnet-io/gnet-benchmarks/blob/v2/echo-gnet-server/main.go](https://github.com/gnet-io/gnet-benchmarks/blob/v2/echo-gnet-server/main.go)
