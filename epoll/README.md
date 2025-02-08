@@ -56,7 +56,7 @@ func main() {
 ```go
 func sysmon() {
     for {
-        // 每隔10s周期处理
+        // 每隔20μs～10s周期处理
         // poll network if not polled for more than 10ms
         lastpoll := sched.lastpoll.Load()
         if netpollinited() && lastpoll != 0 && lastpoll+10*1000*1000 < now {
