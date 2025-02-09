@@ -1,0 +1,9 @@
+// product.proto
+syntax = "proto3";
+option go_package = "./product"; // 将这里修改为你期望的包名和路径
+message Product {
+	int32 product_id = 1;
+	string name = 2;
+	int32 price = 3;
+	string url = 4;
+}
