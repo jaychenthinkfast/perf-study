@@ -1,0 +1,8 @@
+mode: set
+test/main.go:3.24,5.2 1 1
+test/mock.go:9.49,11.16 2 0
+test/mock.go:11.16,13.3 1 0
+test/mock.go:14.2,15.30 2 0
+test/mock.go:19.51,22.16 3 1
+test/mock.go:22.16,24.3 1 0
+test/mock.go:25.2,25.26 1 1
