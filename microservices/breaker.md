@@ -8,6 +8,18 @@ go-zero 已经内置了熔断器组件 breaker.Breaker ，go-zero 中采用滑�
 breaker.go
 ## core
 https://github.com/zeromicro/go-zero/blob/master/core/breaker/googlebreaker.go
+```mermaid
+flowchart TD
+    A[开始] --> B[计算加权接受率]
+    B --> C{丢弃比率是否小于等于0}
+    C -->|Yes| D[允许请求]
+    C -->|No| E{是否强制通过}
+    E -->|Yes| D
+    E -->|No| F[计算最终丢弃比率]
+    F --> G{是否丢弃请求}
+    G -->|Yes| H[拒绝请求]
+    G -->|No| D
+```
 
 Google Sre过载保护算法，该算法的原理如下：
 
