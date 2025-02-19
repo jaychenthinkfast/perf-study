@@ -2,7 +2,10 @@ module microservices
 
 go 1.23.4
 
-require github.com/zeromicro/go-zero v1.8.0
+require (
+	github.com/zeromicro/go-zero v1.8.0
+	golang.org/x/time v0.9.0
+)
 
 require (
 	github.com/fatih/color v1.18.0 // indirect
