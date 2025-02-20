@@ -20,3 +20,17 @@ Raw->Builder->Strconv->Unsafe
 * strings.Builder （strings.Join,strings.Replace 用到）
   * Strconv
     * Unsafe
+
+## sonic vs stdlib
+```
+ go test -bench=. -benchmem sonic_test.go
+goos: darwin
+goarch: amd64
+cpu: Intel(R) Core(TM) i7-8569U CPU @ 2.80GHz
+BenchmarkSonicMarshal-8          4532118               253.7 ns/op            67 B/op          3 allocs/op
+BenchmarkSonicUnmarshal-8        3399259               343.8 ns/op            82 B/op          3 allocs/op
+BenchmarkStdMarshal-8            3839728               310.0 ns/op            48 B/op          2 allocs/op
+BenchmarkStdUnmarshal-8          1000000              1024 ns/op             248 B/op          6 allocs/op
+PASS
+ok      command-line-arguments  6.009s
+```
