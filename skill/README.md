@@ -69,3 +69,16 @@ BenchmarkGetCapacitySet-8          29354            407447 ns/op          182481
 
 内存，cpu 节约
 
+## 优化四
+使用 for 循环
+
+因为 当使用 for range 值遍历的方式时，每次迭代都会将结构体元素复制到一个新的变量中。
+如果结构体的字段较多或者字段的数据类型占用较大空间（如包含大型数组的结构体），这种复制操作的开销会很大。
+
+go test -bench=. -benchmem range_test.go
+```
+BenchmarkSliceStructByFor-8               633325              1612 ns/op               0 B/op          0 allocs/op
+BenchmarkSliceStructByRangeIndex-8        725910              1617 ns/op               0 B/op          0 allocs/op
+BenchmarkSliceStructByRangeValue-8          3408            299235 ns/op               0 B/op          0 allocs/op
+```
+性能差距百倍
