@@ -101,3 +101,5 @@ ok      errgroup        21.398s
 * 使用err 切片➕锁
   * github.com/facebookgo/errgroup
   * github.com/vardius/gollback
+* 使用 err 切片（固定 len)
+  * getallerrs_test.go
