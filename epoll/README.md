@@ -137,6 +137,19 @@ func startTheWorldWithSema(now int64, w worldStop) int64 {
 * 支持 TCP，Unix Domain Socket
 * 支持 Linux，macOS（操作系统）
 
+#### vs default
+Golang 官方的 net 库在高并发场景存在下面两个问题
+1. golang 运行时在调用操作系统的 epoll_wait 方法后，需要循环对网络就绪事件进行处理，
+但 net 库是由一个 epoll 池监听所有的网络事件，在高并发场景下，由于同时需要处理的事件很多，循环本身可能会成为性能瓶颈。
+2. net 库的每个连接，都需要一个协程进行处理（goroutine-per-connection 模式），
+而且当网络连接的读写事件未就绪时，协程会被阻塞。在高并发场景，连接数比较多时，会导致存在大量被阻塞的协程，增加内存占用和协程调度开销。
+
+**netpoll 解决**
+1. 针对高并发场景循环处理的事件过多的问题，netpoll 采用了主从多 Reactor 的模式。
+也就是由多个协程监听多个 epoll 池，每个 epoll 池放一部分需要监听的文件描述符（fd）。主 Reactor 监听连接事件，从 Reactor 监听读写等网络事件。
+2. 针对 net 库读写未就绪，导致协程阻塞问题，netpoll 由从 Reactor 完成内核和程序之间的数据复制，
+协程池中的协程只负责异步对业务逻辑进行处理，不再需要阻塞等待网络 IO 事件就绪和数据复制，从而避免了大量协程因网络 IO 而被阻塞的问题。
+
 ### [panjf2000/gnet](https://github.com/panjf2000/gnet)
 
 gnet 是一个基于事件驱动的高性能和轻量级网络框架。这个框架是基于 epoll 和 kqueue 从零开发的，而且相比 Go net，它能以更低的内存占用实现更高的性能。
