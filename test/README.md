@@ -14,6 +14,28 @@ func TestAdd(t *testing.T) {
 	// Assert（断言）
 	assert.Equal(t, expected, result)
 }
+//table-driven test
+func TestAdd0(t *testing.T) {
+    tests := []struct {
+        name     string
+        inputA   int
+        inputB   int
+        expected int
+    }{
+        {"Add positive numbers", 1, 2, 3},
+        {"Add negative numbers", -1, 1, 0},
+        {"Add zero", 0, 0, 0},
+        // 更多测试用例...
+    }
+
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            result := Add(tt.inputA, tt.inputB)
+            assert.Equal(t, tt.expected, result, "结果不符合期望")
+        })
+    }
+}
+
 //分组
 func TestAddWithConvey(t *testing.T) {
 	Convey("关于Add函数的测试", t, func() {

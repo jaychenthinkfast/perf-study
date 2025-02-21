@@ -20,6 +20,28 @@ func TestAdd(t *testing.T) {
 	assert.Equal(t, expected, result)
 }
 
+// 通过定义结构体切片来构建测试数据表格，接着在测试函数中遍历这个表格，对每组数据执行相同的测试逻辑，从而实现 table-driven 模式。
+func TestAdd0(t *testing.T) {
+	tests := []struct {
+		name     string
+		inputA   int
+		inputB   int
+		expected int
+	}{
+		{"Add positive numbers", 1, 2, 3},
+		{"Add negative numbers", -1, 1, 0},
+		{"Add zero", 0, 0, 0},
+		// 更多测试用例...
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := Add(tt.inputA, tt.inputB)
+			assert.Equal(t, tt.expected, result, "结果不符合期望")
+		})
+	}
+}
+
 func TestAddWithConvey(t *testing.T) {
 	Convey("关于Add函数的测试", t, func() {
 		Convey("正常情况的测试", func() {
