@@ -11,45 +11,58 @@
     * 该函数的返回值会通过 Do 方法传递给所有等待的请求。
 ## 代码细节
 ```go
+// Group represents a class of work and forms a namespace in
+// which units of work can be executed with duplicate suppression.
 type Group struct {
-	mu sync.Mutex
-	m  map[string]*call
+    mu sync.Mutex       // protects m
+    m  map[string]*call // lazily initialized
 }
 
+// call is an in-flight or completed singleflight.Do call
 type call struct {
-	done chan struct{} // 标识该请求是否完成
-	val  interface{}   // 结果值
-	err  error         // 错误
+    wg sync.WaitGroup
+
+  // These fields are written once before the WaitGroup is done
+  // and are only read after the WaitGroup is done.
+  val interface{}
+  err error
+  
+  // These fields are read and written with the singleflight
+  // mutex held before the WaitGroup is done, and are read but
+  // not written after the WaitGroup is done.
+  dups  int
+  chans []chan<- Result
 }
 
-func (g *Group) Do(key string, fn func() (interface{}, error)) (interface{}, error) {
-	g.mu.Lock()
-	if g.m == nil {
-		g.m = make(map[string]*call)
-	}
-	// 如果有一个正在执行的请求，则等待它完成
-	if c, ok := g.m[key]; ok {
-		g.mu.Unlock()
-		// 等待已在执行的请求完成
-		<-c.done
-		return c.val, c.err
-	}
+// Do executes and returns the results of the given function, making
+// sure that only one execution is in-flight for a given key at a
+// time. If a duplicate comes in, the duplicate caller waits for the
+// original to complete and receives the same results.
+// The return value shared indicates whether v was given to multiple callers.
+func (g *Group) Do(key string, fn func() (interface{}, error)) (v interface{}, err error, shared bool) {
+    g.mu.Lock()
+    if g.m == nil {
+        g.m = make(map[string]*call)
+    }
+    if c, ok := g.m[key]; ok {
+        c.dups++
+        g.mu.Unlock()
+        c.wg.Wait()
 
-	// 否则创建一个新的请求并记录
-	c := &call{done: make(chan struct{})}
+        if e, ok := c.err.(*panicError); ok {
+            panic(e)
+        } else if c.err == errGoexit {
+            runtime.Goexit()
+        }
+        return c.val, c.err, true
+    }
+    c := new(call)
+    c.wg.Add(1)
 	g.m[key] = c
-	g.mu.Unlock()
+    g.mu.Unlock()
 
-	// 执行实际工作
-	c.val, c.err = fn()
-	close(c.done)
-
-	// 清理
-	g.mu.Lock()
-	delete(g.m, key)
-	g.mu.Unlock()
-
-	return c.val, c.err
+    g.doCall(c, key, fn)
+    return c.val, c.err, c.dups > 0
 }
 
 ```
