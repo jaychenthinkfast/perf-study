@@ -1,3 +1,4 @@
+# perf
 ## 性能测试
 [benchmark/README.md](benchmark/README.md)
 
@@ -110,3 +111,46 @@ singleflight 的最大优势在于避免了高并发时对相同资源的重复�
 
 [singleflight/README.md](singleflight/README.md)
 
+## 性能优化
+通过 pprof 火焰图确定瓶颈点，优化
+
+1. map 值空结构体
+2. map 预设容量
+3. slic 预设容量
+4. for range 改为 for index
+
+[skill/README.md](skill/README.md)
+
+通过
+* strings.Builder(预分配)提升性能
+* 避免使用fmt.Sprint改用 strconv.Itoa提升性能
+* Str2Bytes可以使用unsafe.Pointer 达到 0 内存分配
+* 实用高性能的序列化库 sonic提升性能，减少内存分配
+
+[skill1/README.md]
+
+## 协程池
+[skill2/workerpool/README.md](skill2/workerpool/README.md)
+
+## sync.pool
+[skill2/pool/README.md](skill2/pool/README.md)
+
+## 无锁栈
+[skill2/lockfreestack/README.md](skill2/lockfreestack/README.md)
+
+## syncmap
+[syncmap/README.md](syncmap/README.md)
+
+## 测试
+* 单元测试
+* 测试覆盖率
+* mock
+
+[test/README.md](test/README.md)
+
+## trace分析
+[trace/README.md](trace/README.md)
+
+[trace1/http/README.md](trace1/http/README.md)
+
+[trace1/runtime/READMD.md](trace1/runtime/READMD.md)
