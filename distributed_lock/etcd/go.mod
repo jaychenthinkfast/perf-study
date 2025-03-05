@@ -1,6 +1,6 @@
-module distributed_lock
+module distributed_lock/etcd
 
-go 1.24.0
+go 1.23.4
 
 require go.etcd.io/etcd/client/v3 v3.5.18
 

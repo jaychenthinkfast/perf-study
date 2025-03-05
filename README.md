@@ -21,7 +21,10 @@
 [db/b+.md](db/b+.md)
 
 # 使用 etcd 实现分布式锁
-[distributed_lock/README.md](distributed_lock/README.md)
+[distributed_lock/etcd/README.md](distributed_lock/etcd/README.md)
+
+# 实用 redis 实现分布式锁
+[distributed_lock/redis/README.md](distributed_lock/etcd/README.md)
 
 # epoll
 | **方面**         | **gnet**                            | **golang net**                    |
