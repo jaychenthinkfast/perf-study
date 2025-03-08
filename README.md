@@ -160,3 +160,9 @@ singleflight 的最大优势在于避免了高并发时对相同资源的重复�
 
 ## 布隆过滤器
 [redisbloom/README.md](redisbloom/README.md)
+
+## uptrace
+“Uptrace” 是一个开源的分布式追踪工具，主要用于监控和分析应用程序的性能。
+它可以帮助开发者追踪请求在分布式系统中的流转过程，识别性能瓶颈、延迟问题或错误。
+Uptrace 支持多种编程语言和框架，通常与像 OpenTelemetry 这样的标准集成，收集和可视化追踪数据。
+[uptrace/README.md](uptrace/README.md)
