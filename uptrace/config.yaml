@@ -1,0 +1,32 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+  redis:
+    endpoint: localhost:6379  # 替换为您的 Redis 实例地址
+    collection_interval: 10s  # 数据收集间隔
+
+exporters:
+  otlp:
+    endpoint: otlp.uptrace.dev:4317  # Uptrace 的 OTLP 端点
+    headers:
+      uptrace-dsn: ''  # 替换为您的 Uptrace DSN
+
+processors:
+  resourcedetection:
+    detectors: [env, system]
+  cumulativetodelta:
+  batch:
+    timeout: 10s
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp]
+    metrics:
+      receivers: [otlp, redis]  # 包含 Redis receiver
+      processors: [cumulativetodelta, batch, resourcedetection]
+      exporters: [otlp]

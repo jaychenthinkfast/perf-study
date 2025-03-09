@@ -94,6 +94,45 @@ trace: https://app.uptrace.dev/traces/<trace_id>
 
 * https://uptrace.dev/get/opentelemetry-go
 
+## otelcol-contrib
+OpenTelemetry Collector 的 Redis receiver 会定期运行 Redis 的 INFO 命令，收集性能指标（如内存使用、命令延迟、键空间统计等）。
+
+mac为例
+
+`wget https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.121.0/otelcol-contrib_0.121.0_darwin_amd64.tar.gz`
+
+解压到可执行目录，加上文件可执行权限
+
+### 配置
+config.yaml需要修改 dns
+
+* redis receiver 配置了 Redis 的地址（endpoint）和数据收集频率（collection_interval）。
+* exporters 指定了数据发送到的 Uptrace 端点，您需要从 Uptrace 仪表板获取 uptrace-dsn。
+* processors 用于处理数据，例如将累积指标转换为增量指标。
+
+### 告警
+https://uptrace.dev/features/alerting
+
+
+### 运行
+`otelcol-contrib --config config.yaml`
+
+输出
+```
+2025-03-09T10:10:25.889+0800    info    service@v0.121.0/service.go:193 Setting up own telemetry...
+2025-03-09T10:10:25.890+0800    info    service@v0.121.0/service.go:258 Starting otelcol-contrib...     {"Version": "0.121.0", "NumCPU": 8}
+2025-03-09T10:10:25.890+0800    info    extensions/extensions.go:40     Starting extensions...
+2025-03-09T10:10:25.891+0800    info    internal/resourcedetection.go:137       began detecting resource information    {"otelcol.component.id": "resourcedetection", "otelcol.component.kind": "Processor", "otelcol.pipeline.id": "metrics", "otelcol.signal": "metrics"}
+2025-03-09T10:10:26.019+0800    info    internal/resourcedetection.go:188       detected resource information   {"otelcol.component.id": "resourcedetection", "otelcol.component.kind": "Processor", "otelcol.pipeline.id": "metrics", "otelcol.signal": "metrics", "resource": {"host.name":"chenjiedeMacBook-Pro-88.local","os.type":"darwin"}}
+2025-03-09T10:10:26.020+0800    info    otlpreceiver@v0.121.0/otlp.go:116       Starting GRPC server    {"otelcol.component.id": "otlp", "otelcol.component.kind": "Receiver", "endpoint": "localhost:4317"}
+2025-03-09T10:10:26.021+0800    info    otlpreceiver@v0.121.0/otlp.go:173       Starting HTTP server    {"otelcol.component.id": "otlp", "otelcol.component.kind": "Receiver", "endpoint": "localhost:4318"}
+2025-03-09T10:10:26.022+0800    info    service@v0.121.0/service.go:281 Everything is ready. Begin running and processing data.
+^C2025-03-09T10:13:21.415+0800  info    otelcol@v0.121.0/collector.go:342       Received signal from OS {"signal": "interrupt"}
+2025-03-09T10:13:21.415+0800    info    service@v0.121.0/service.go:323 Starting shutdown...
+2025-03-09T10:13:21.728+0800    info    extensions/extensions.go:68     Stopping extensions...
+2025-03-09T10:13:21.729+0800    info    service@v0.121.0/service.go:337 Shutdown complete.
+
+```
 
 
 ## 数据联动
